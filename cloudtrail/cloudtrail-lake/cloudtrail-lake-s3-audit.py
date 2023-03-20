@@ -47,16 +47,13 @@ while client.get_query_results(QueryId=query_id)['QueryStatus'] != "FINISHED":
     time.sleep(1)
 
 # Write query results to JSON file - don't need this step, but useful for analysis/troubleshooting
-with open(results_json,'w') as results:
-    results.write(json.dumps(client.get_query_results(QueryId=query_id)))
+with open(results_json,'w') as rj:
+    data = client.get_query_results(QueryId=query_id)
+    rj.write(json.dumps(data))
 
 # Read list of authorized AWS Account IDs
-with open(accounts,'r') as f:
-    a_list = f.read().splitlines()
-
-# Read query results
-with open(results_json,'r') as j:
-    data = json.load(j)
+with open(accounts,'r') as a:
+    a_list = a.read().splitlines()
 
 # Parse query results and extract data for unauthorized AWS Account IDs in CSV format
 with open(results_csv,'w',newline='') as r:
