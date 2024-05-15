@@ -38,7 +38,7 @@ Alternatively, download the code and extract the aws directory.
 **STEP 3:** Install the required python modules 
 
 ```
-cd aws/comprehend/trustpilot_review_sentiments
+cd aws/trustpilot_review_sentiments
 pip install -r requirements.txt
 ```
 

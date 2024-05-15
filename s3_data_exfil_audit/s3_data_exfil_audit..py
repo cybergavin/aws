@@ -1,20 +1,10 @@
-# @cybergavin - https://github.com/cybergavin
-# This program queries a CloudTrail Lake event data store for S3 data events related to writing data to external S3 buckets.
-# External S3 buckets are S3 buckets that do not belong to your AWS account.
-# A list of authorized AWS Account IDs is used to validate the query results.
-# Prerequisites:
-#   - Shared credential file (~/.aws/credentials) with credentials that have the required IAM policies
-#   - The required Python libraries (as per import statements)
-# NOTE: Ensure you modify the query assigned to cloudtrail_lake_query to meet your needs
-#
-#########################################################################################################################################
-
 import time
 import sys
 import csv
 import json
 from pathlib import Path, PurePath
 import boto3
+from config import *
 
 
 # Validate input arguments
@@ -32,8 +22,8 @@ client = boto3.client('cloudtrail')
 
 # Prepare CloudTrail Lake Query
 cloudtrail_lake_query = (f"SELECT eventTime, eventSource, sourceIPAddress, eventName, element_at(requestParameters, 'bucketName') AS DestinationBucket, userIdentity.accountid AS SourceAccountID, element_at(resources,2).accountid AS RecipientAccountID" # Select specific columns from event data store
-                         f" FROM xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" # event data store ID - to be modified
-                         f" WHERE eventTime > 'YYYY-MM-DD 00:00:00'" # event time filter - to be modified
+                         f" FROM {event_data_store_id}" 
+                         f" WHERE eventTime > '{event_time_filter}'"
                          f" AND eventName IN ('PutObject','CopyObject','CreateMultipartUpload','UploadPart','UploadPartCopy','CompleteMultipartUpload','PostObject')" # check data exfiltration to S3
                          f" ORDER BY eventTime DESC"
                          )
