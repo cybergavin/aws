@@ -1,0 +1,12 @@
+[profile default]
+sso_session = xxxxxxxxx
+sso_account_id = 123456789012
+sso_role_name = xxxxxxxxx-iic-admin
+region = us-west-2
+output = yaml
+
+
+[sso-session xxxxxxxxx]
+sso_start_url = https://xxxxxxxxx.awsapps.com/start
+sso_region = us-west-2
+sso_registration_scopes = sso:account:access
