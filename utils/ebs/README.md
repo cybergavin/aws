@@ -106,3 +106,141 @@ python3 delete_unattached_volumes.py
 
 - Some of these utilities **delete** AWS resources.
 - Use with caution and test in non-production environments first.
+
+---
+Here’s a **concise, accurate README** for `ebs_orphan_cleanup.py`, matching the style and level of detail from the previous ones.
+
+---
+
+## `ebs_orphan_cleanup.py`
+
+### Overview
+
+Identifies **unattached (orphaned) EBS volumes**, classifies them by origin pattern, and optionally **tags or deletes** volumes that are safe to clean up.
+
+Designed for **safe, auditable EBS cleanup** in large AWS environments.
+
+---
+
+### What It Does
+
+* Lists **unattached (`available`) EBS volumes**
+* Skips:
+
+  * Volumes younger than a configurable grace period
+  * Volumes protected by a tag (default: `DoNotDelete=true`)
+* Analyzes snapshot origins to classify volumes into patterns
+* Supports:
+
+  * Console table output
+  * CSV export
+  * Safe tagging for later deletion
+  * Deletion of previously tagged volumes only
+
+---
+
+### Volume Classification Patterns
+
+* **Pattern1**
+
+  * Never attached
+  * No snapshot source
+* **Pattern2**
+
+  * Never attached
+  * Created from an AMI copy snapshot
+* **Other**
+
+  * Any volume not matching the above patterns
+
+Only **Pattern1** and **Pattern2** volumes are considered safe to tag for deletion.
+
+---
+
+### Requirements
+
+* Python 3.9+
+* `boto3`
+* `tabulate`
+* AWS credentials configured
+* Required IAM permissions:
+
+  * `ec2:DescribeVolumes`
+  * `ec2:DescribeSnapshots`
+  * `ec2:CreateTags`
+  * `ec2:DeleteVolume`
+
+---
+## `ebs_orphan_cleanup.py`
+
+### Usage
+
+#### List orphaned volumes (default behavior)
+
+```bash
+python ebs_orphan_cleanup.py
+```
+
+#### Apply a grace period (skip recent volumes)
+
+```bash
+python ebs_orphan_cleanup.py --grace-days 7
+```
+
+#### Output results to CSV
+
+```bash
+python ebs_orphan_cleanup.py --output csv --csv-file orphaned_volumes.csv
+```
+
+#### Tag safe-to-delete volumes (non-destructive)
+
+```bash
+python ebs_orphan_cleanup.py --tag-only
+```
+
+#### Delete previously tagged volumes
+
+```bash
+python ebs_orphan_cleanup.py --delete-tagged
+```
+
+---
+
+### Output Fields
+
+* `VolumeId`
+* `Size_GB`
+* `AZ`
+* `CreateTime`
+* `LastInstance` (or `None` if never attached)
+* `SnapshotId`
+* `SnapshotExists`
+* `Pattern`
+
+---
+
+### Tagging Behavior
+
+When `--tag-only` is used, qualifying volumes receive:
+
+* `SafeToDelete=True`
+* `DeleteReason=Pattern1 | Pattern2`
+* `DeleteMarkedOn=YYYY-MM-DD`
+
+No volumes are deleted unless `--delete-tagged` is explicitly run.
+
+---
+
+### Safety Notes
+
+* Deletion is **opt-in and tag-based**
+* Protected volumes (`DoNotDelete=true`) are always skipped
+* Only unattached volumes in `available` state are considered
+* Recommended workflow:
+
+  1. Report
+  2. Review
+  3. Tag
+  4. Delete in a later run
+

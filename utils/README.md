@@ -17,7 +17,6 @@ This repository contains modular folders, each focused on a specific area of AWS
 | `ebs/` | Scripts to administer and report on EBS volumes |
 | `s3/` | Scripts to administer and report on S3 buckets |
 | `ec2/` | Scripts to administer and report on EC2 instances |
-| `iam/` | Scripts to administer and report on IAM Policies, Roles and Identity Providers |
 | `...` | More folders coming soon as utilities are added |
 
 ---
