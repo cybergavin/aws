@@ -1,4 +1,4 @@
-# AMI Management Scripts
+# AMI Management Utilities
 
 This folder contains scripts to manage Amazon Machine Images (AMIs) for EC2 instances backup and cleanup workflows. Designed for safe, repeatable use in automation or operational tasks.
 
@@ -11,7 +11,9 @@ This folder contains scripts to manage Amazon Machine Images (AMIs) for EC2 inst
 
 ## Scripts
 
-### 🔹 `backup-instances-parallel.sh`
+### 🔹 `backup-ec2-parallel.sh`
+
+**WARNING** 🛑 : This script **stops** EC2 instances before creating AMI backups.
 
 Creates AMI backups of multiple EC2 instances in parallel.
 
@@ -23,9 +25,11 @@ Creates AMI backups of multiple EC2 instances in parallel.
 
 #### Usage:
 ```bash
-chmod +x backup-instances-parallel.sh
-./backup-instances-parallel.sh [--prefix <ami_prefix>] [--file <instances_file>] [--batch <max_parallel_jobs>]
+chmod +x backup-ec2-parallel.sh
+./backup-ec2-parallel.sh [--prefix <ami_prefix>] [--file <instances_file>] [--batch <max_parallel_jobs>]
 ```
+
+---
 
 ### 🔹 `cleanup-ami.sh`
 

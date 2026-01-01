@@ -1,6 +1,9 @@
 #!/bin/bash
-
-# === USAGE FUNCTION ===
+# Deletes a specific AMI and its associated snapshots.
+# Usage: ./cleanup-ami.sh --ami-id <ami-xxxxxxxxxxxxxxxxx>
+# Ensure you have the AWS CLI configured with appropriate permissions.
+###############################################################################################
+# Usage Function
 function usage() {
   echo "Usage: $0 --ami-id <ami-xxxxxxxxxxxxxxxxx>"
   echo ""
@@ -8,7 +11,7 @@ function usage() {
   exit 1
 }
 
-# === ARG PARSING ===
+# Parse Arguments
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --ami-id)
@@ -25,7 +28,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# === VALIDATION ===
+# Validate AMI ID
 if [[ -z "$AMI_ID" ]]; then
   echo "❌ Error: --ami-id is required."
   usage

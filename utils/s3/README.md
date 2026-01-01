@@ -18,3 +18,22 @@
   ```bash
   python empty_s3_bucket.py <bucket-name>
   ```
+
+### 3. `s3_copy.py`
+- Copies all objects from a source S3 bucket to a destination bucket while retaining their prefix paths.
+- Supports pagination for buckets with large numbers of objects.
+- Uses parallel threading for efficient copying of multiple objects.
+- Includes dry-run mode to preview what will be copied without executing the operation.
+- Usage:
+```bash
+  # Dry run to preview objects that would be copied
+  python s3_copy.py source-bucket destination-bucket --dry-run
+  
+  # Copy all objects
+  python s3_copy.py source-bucket destination-bucket
+  
+  # Copy only objects with a specific prefix
+  python s3_copy.py source-bucket destination-bucket --prefix folder/subfolder/
+  
+  # Use more parallel workers for faster copying
+  python s3_copy.py source-bucket destination-bucket --max-workers 20

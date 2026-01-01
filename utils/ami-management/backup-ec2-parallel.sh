@@ -1,12 +1,15 @@
 #!/bin/bash
-
-# === DEFAULTS ===
+# Backup EC2 instances in parallel, creating AMIs with a specified prefix.
+# Usage: ./backup-ec2-parallel.sh [--prefix <ami_prefix>] [--file <instances_file>] [--batch <max_parallel_jobs>]
+# Ensure you have the AWS CLI configured with appropriate permissions.
+###############################################################################################
+# Defaults
 AMI_PREFIX="cps"
 INSTANCE_NAME_FILE="instances.txt"
 MAX_PARALLEL=4
 DATE=$(date +%Y%m%d-%H%M%S)
 
-# === USAGE FUNCTION ===
+# Usage Function
 function usage() {
   echo "Usage: $0 [--prefix <ami_prefix>] [--file <instances_file>] [--batch <max_parallel_jobs>]"
   echo ""
@@ -16,7 +19,7 @@ function usage() {
   exit 1
 }
 
-# === PARSE ARGS ===
+# Parse Arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
     --prefix)
@@ -41,20 +44,20 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# === VALIDATION ===
+# Validate instance name file
 if [[ ! -f "$INSTANCE_NAME_FILE" ]]; then
   echo "❌ Error: Instance name file '$INSTANCE_NAME_FILE' not found."
   exit 1
 fi
 
-# === SEMAPHORE CONTROL ===
+# Semaphore control function to limit parallel jobs
 function wait_for_jobs {
   while (( $(jobs -r | wc -l) >= MAX_PARALLEL )); do
     sleep 1
   done
 }
 
-# === BACKUP FUNCTION ===
+# Per-instance backup logic
 function backup_instance {
   INSTANCE_NAME="$1"
   echo "🔍 Processing instance: $INSTANCE_NAME"
@@ -103,7 +106,7 @@ function backup_instance {
   echo "✅ $INSTANCE_NAME backup complete"
 }
 
-# === MAIN LOOP ===
+# Main loop: parallel execution
 while IFS= read -r INSTANCE_NAME || [[ -n "$INSTANCE_NAME" ]]; do
   [[ -z "$INSTANCE_NAME" ]] && continue
   wait_for_jobs
